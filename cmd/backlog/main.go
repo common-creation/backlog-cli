@@ -223,6 +223,133 @@ func main() {
 							return nil
 						},
 					},
+					{
+						Name:  "update",
+						Usage: "Update an existing issue",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "key",
+								Aliases:  []string{"k"},
+								Usage:    "Issue key (e.g., PROJECT-123)",
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:    "summary",
+								Aliases: []string{"s"},
+								Usage:   "New issue summary",
+							},
+							&cli.StringFlag{
+								Name:    "description",
+								Aliases: []string{"d"},
+								Usage:   "New issue description",
+							},
+							&cli.IntFlag{
+								Name:    "status",
+								Aliases: []string{"st"},
+								Usage:   "New status ID",
+							},
+						},
+						Action: func(c *cli.Context) error {
+							backlogClient, err := client.NewClient()
+							if err != nil {
+								return err
+							}
+							
+							issueKey := c.String("key")
+							summary := c.String("summary")
+							description := c.String("description")
+							statusID := c.Int("status")
+							
+							issue, err := backlogClient.UpdateIssue(issueKey, summary, description, statusID)
+							if err != nil {
+								return err
+							}
+							
+							updatedIssueKey := ""
+							if issue.IssueKey != nil {
+								updatedIssueKey = *issue.IssueKey
+							}
+							
+							fmt.Printf("Updated issue: %s\n", updatedIssueKey)
+							
+							return nil
+						},
+					},
+					{
+						Name:  "comment",
+						Usage: "Add a comment to an issue",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "key",
+								Aliases:  []string{"k"},
+								Usage:    "Issue key (e.g., PROJECT-123)",
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "content",
+								Aliases:  []string{"c"},
+								Usage:    "Comment content",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							backlogClient, err := client.NewClient()
+							if err != nil {
+								return err
+							}
+							
+							issueKey := c.String("key")
+							content := c.String("content")
+							
+							comment, err := backlogClient.CreateIssueComment(issueKey, content)
+							if err != nil {
+								return err
+							}
+							
+							commentID := 0
+							if comment.ID != nil {
+								commentID = *comment.ID
+							}
+							
+							fmt.Printf("Added comment #%d to issue %s\n", commentID, issueKey)
+							
+							return nil
+						},
+					},
+					{
+						Name:  "close",
+						Usage: "Close an issue",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "key",
+								Aliases:  []string{"k"},
+								Usage:    "Issue key (e.g., PROJECT-123)",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							backlogClient, err := client.NewClient()
+							if err != nil {
+								return err
+							}
+							
+							issueKey := c.String("key")
+							
+							issue, err := backlogClient.CloseIssue(issueKey)
+							if err != nil {
+								return err
+							}
+							
+							closedIssueKey := ""
+							if issue.IssueKey != nil {
+								closedIssueKey = *issue.IssueKey
+							}
+							
+							fmt.Printf("Closed issue: %s\n", closedIssueKey)
+							
+							return nil
+						},
+					},
 				},
 			},
 			{

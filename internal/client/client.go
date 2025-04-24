@@ -178,3 +178,64 @@ func (c *Client) GetIssueComments(issueKey string) ([]*backlog.IssueComment, err
 
 	return comments, nil
 }
+
+func (c *Client) UpdateIssue(issueKey, summary, description string, statusID int) (*backlog.Issue, error) {
+	if c.readOnly {
+		return nil, fmt.Errorf("cannot update issue: client is in read-only mode")
+	}
+
+	input := &backlog.UpdateIssueInput{}
+	
+	if summary != "" {
+		input.Summary = backlog.String(summary)
+	}
+	
+	if description != "" {
+		input.Description = backlog.String(description)
+	}
+	
+	if statusID > 0 {
+		input.StatusID = backlog.Int(statusID)
+	}
+	
+	issue, err := c.backlogClient.UpdateIssue(issueKey, input)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update issue: %w", err)
+	}
+	
+	return issue, nil
+}
+
+func (c *Client) CloseIssue(issueKey string) (*backlog.Issue, error) {
+	if c.readOnly {
+		return nil, fmt.Errorf("cannot close issue: client is in read-only mode")
+	}
+	
+	input := &backlog.UpdateIssueInput{
+		StatusID: backlog.Int(4),
+	}
+	
+	issue, err := c.backlogClient.UpdateIssue(issueKey, input)
+	if err != nil {
+		return nil, fmt.Errorf("failed to close issue: %w", err)
+	}
+	
+	return issue, nil
+}
+
+func (c *Client) CreateIssueComment(issueKey, content string) (*backlog.IssueComment, error) {
+	if c.readOnly {
+		return nil, fmt.Errorf("cannot create comment: client is in read-only mode")
+	}
+	
+	input := &backlog.CreateIssueCommentInput{
+		Content: backlog.String(content),
+	}
+	
+	comment, err := c.backlogClient.CreateIssueComment(issueKey, input)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create comment: %w", err)
+	}
+	
+	return comment, nil
+}
