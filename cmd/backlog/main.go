@@ -54,7 +54,22 @@ func main() {
 							}
 							
 							for _, issue := range issues {
-								fmt.Printf("#%d %s - %s\n", issue.ID, issue.IssueKey, issue.Summary)
+								id := 0
+								if issue.ID != nil {
+									id = *issue.ID
+								}
+								
+								issueKey := ""
+								if issue.IssueKey != nil {
+									issueKey = *issue.IssueKey
+								}
+								
+								summary := ""
+								if issue.Summary != nil {
+									summary = *issue.Summary
+								}
+								
+								fmt.Printf("#%d %s - %s\n", id, issueKey, summary)
 							}
 							
 							return nil
@@ -84,11 +99,36 @@ func main() {
 								return err
 							}
 							
-							fmt.Printf("Issue: %s\n", issue.IssueKey)
-							fmt.Printf("Summary: %s\n", issue.Summary)
-							fmt.Printf("Status: %s\n", issue.Status.Name)
-							fmt.Printf("Assignee: %s\n", issue.Assignee.Name)
-							fmt.Printf("Description:\n%s\n", issue.Description)
+							issueKey := ""
+							if issue.IssueKey != nil {
+								issueKey = *issue.IssueKey
+							}
+							
+							summary := ""
+							if issue.Summary != nil {
+								summary = *issue.Summary
+							}
+							
+							status := ""
+							if issue.Status != nil && issue.Status.Name != nil {
+								status = *issue.Status.Name
+							}
+							
+							assignee := ""
+							if issue.Assignee != nil && issue.Assignee.Name != nil {
+								assignee = *issue.Assignee.Name
+							}
+							
+							description := ""
+							if issue.Description != nil {
+								description = *issue.Description
+							}
+							
+							fmt.Printf("Issue: %s\n", issueKey)
+							fmt.Printf("Summary: %s\n", summary)
+							fmt.Printf("Status: %s\n", status)
+							fmt.Printf("Assignee: %s\n", assignee)
+							fmt.Printf("Description:\n%s\n", description)
 							
 							return nil
 						},
@@ -144,7 +184,12 @@ func main() {
 								return err
 							}
 							
-							fmt.Printf("Created issue: %s\n", issue.IssueKey)
+							issueKey := ""
+							if issue.IssueKey != nil {
+								issueKey = *issue.IssueKey
+							}
+							
+							fmt.Printf("Created issue: %s\n", issueKey)
 							
 							return nil
 						},
@@ -170,7 +215,17 @@ func main() {
 							}
 							
 							for _, project := range projects {
-								fmt.Printf("%s - %s\n", project.ProjectKey, project.Name)
+								projectKey := ""
+								if project.ProjectKey != nil {
+									projectKey = *project.ProjectKey
+								}
+								
+								name := ""
+								if project.Name != nil {
+									name = *project.Name
+								}
+								
+								fmt.Printf("%s - %s\n", projectKey, name)
 							}
 							
 							return nil
