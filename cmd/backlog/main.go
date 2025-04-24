@@ -198,17 +198,28 @@ func main() {
 								Usage:    "API key",
 								Required: true,
 							},
+							&cli.BoolFlag{
+								Name:    "read-only",
+								Aliases: []string{"r"},
+								Usage:   "Set to read-only mode (default: true)",
+								Value:   true,
+							},
 						},
 						Action: func(c *cli.Context) error {
 							space := c.String("space")
 							apiKey := c.String("api-key")
+							readOnly := c.Bool("read-only")
 							
-							err := client.SaveConfig(space, apiKey)
+							err := client.SaveConfig(space, apiKey, readOnly)
 							if err != nil {
 								return err
 							}
 							
-							fmt.Println("Configuration saved successfully")
+							modeStr := "read-only"
+							if !readOnly {
+								modeStr = "read-write"
+							}
+							fmt.Printf("Configuration saved successfully (mode: %s)\n", modeStr)
 							return nil
 						},
 					},

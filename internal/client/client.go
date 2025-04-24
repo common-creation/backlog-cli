@@ -10,12 +10,14 @@ import (
 )
 
 type Config struct {
-	Space  string `json:"space"`
-	APIKey string `json:"api_key"`
+	Space     string `json:"space"`
+	APIKey    string `json:"api_key"`
+	ReadOnly  bool   `json:"read_only"`
 }
 
 type Client struct {
 	backlogClient *backlog.Client
+	readOnly      bool
 }
 
 func NewClient() (*Client, error) {
@@ -27,13 +29,15 @@ func NewClient() (*Client, error) {
 	c := backlog.New(config.Space, config.APIKey)
 	return &Client{
 		backlogClient: c,
+		readOnly:      config.ReadOnly,
 	}, nil
 }
 
-func SaveConfig(space, apiKey string) error {
+func SaveConfig(space, apiKey string, readOnly bool) error {
 	config := Config{
-		Space:  space,
-		APIKey: apiKey,
+		Space:     space,
+		APIKey:    apiKey,
+		ReadOnly:  readOnly,
 	}
 
 	configDir, err := getConfigDir()
@@ -126,6 +130,10 @@ func (c *Client) GetIssue(issueKey string) (*backlog.Issue, error) {
 }
 
 func (c *Client) CreateIssue(projectKey, summary, description string, issueTypeID, priorityID int) (*backlog.Issue, error) {
+	if c.readOnly {
+		return nil, fmt.Errorf("cannot create issue: client is in read-only mode")
+	}
+
 	var projectID int
 	project, err := c.backlogClient.GetProject(projectKey)
 	if err == nil && project != nil && project.ID != nil {
