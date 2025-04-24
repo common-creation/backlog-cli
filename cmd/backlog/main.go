@@ -130,6 +130,35 @@ func main() {
 							fmt.Printf("Assignee: %s\n", assignee)
 							fmt.Printf("Description:\n%s\n", description)
 							
+							comments, err := backlogClient.GetIssueComments(issueKeyParam)
+							if err != nil {
+								return err
+							}
+							
+							if len(comments) > 0 {
+								fmt.Printf("\nComments:\n")
+								for i, comment := range comments {
+									content := ""
+									if comment.Content != nil {
+										content = *comment.Content
+									}
+									
+									createdUser := ""
+									if comment.CreatedUser != nil && comment.CreatedUser.Name != nil {
+										createdUser = *comment.CreatedUser.Name
+									}
+									
+									created := ""
+									if comment.Created != nil {
+										created = comment.Created.Format("2006-01-02 15:04:05")
+									}
+									
+									fmt.Printf("---\n")
+									fmt.Printf("Comment #%d by %s on %s\n", i+1, createdUser, created)
+									fmt.Printf("%s\n", content)
+								}
+							}
+							
 							return nil
 						},
 					},

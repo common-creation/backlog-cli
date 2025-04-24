@@ -169,3 +169,12 @@ func (c *Client) ListProjects() ([]*backlog.Project, error) {
 
 	return projects, nil
 }
+
+func (c *Client) GetIssueComments(issueKey string) ([]*backlog.IssueComment, error) {
+	comments, err := c.backlogClient.GetIssueComments(issueKey, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get issue comments: %w", err)
+	}
+
+	return comments, nil
+}
