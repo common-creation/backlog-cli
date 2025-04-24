@@ -26,7 +26,7 @@ func NewClient() (*Client, error) {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	c := backlog.New(config.Space, config.APIKey)
+	c := backlog.New(config.APIKey, config.Space)
 	return &Client{
 		backlogClient: c,
 		readOnly:      config.ReadOnly,
