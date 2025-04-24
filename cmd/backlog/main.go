@@ -92,9 +92,9 @@ func main() {
 								return err
 							}
 							
-							issueKey := c.String("key")
+							issueKeyParam := c.String("key")
 							
-							issue, err := backlogClient.GetIssue(issueKey)
+							issue, err := backlogClient.GetIssue(issueKeyParam)
 							if err != nil {
 								return err
 							}
