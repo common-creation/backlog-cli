@@ -54,11 +54,6 @@ func main() {
 							}
 							
 							for _, issue := range issues {
-								id := 0
-								if issue.ID != nil {
-									id = *issue.ID
-								}
-								
 								issueKey := ""
 								if issue.IssueKey != nil {
 									issueKey = *issue.IssueKey
@@ -69,7 +64,7 @@ func main() {
 									summary = *issue.Summary
 								}
 								
-								fmt.Printf("#%d %s - %s\n", id, issueKey, summary)
+								fmt.Printf("%s - %s\n", issueKey, summary)
 							}
 							
 							return nil
